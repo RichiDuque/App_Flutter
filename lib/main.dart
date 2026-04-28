@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'core/app_router.dart';
+import 'src/core/app_router.dart';
 import 'src/features/configuracion/data/impresoras_repository.dart';
 import 'src/features/configuracion/presentation/impresoras_provider.dart';
 import 'src/core/database/database_service.dart';
