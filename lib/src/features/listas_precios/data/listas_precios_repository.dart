@@ -205,7 +205,7 @@ class ListasPreciosRepository {
           'precios',
           {
             'id': precio.id,
-            'uuid': precio.uuid ?? '',
+            'uuid': precio.uuid ?? 'precio-${precio.id}',
             'producto_id': precio.productoId,
             'lista_id': precio.listaId,
             'precio': precio.precio,

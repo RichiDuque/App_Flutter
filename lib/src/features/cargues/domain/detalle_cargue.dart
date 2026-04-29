@@ -32,7 +32,7 @@ class DetalleCargue {
   factory DetalleCargue.fromJson(Map<String, dynamic> json) {
     return DetalleCargue(
       id: json['id'] as int,
-      uuid: json['uuid'] as String? ?? '',
+      uuid: json['uuid'] as String? ?? 'det-${json['id']}',
       cargueId: json['cargue_id'] as int,
       productoId: json['producto_id'] as int,
       cantidad: json['cantidad'] as int,

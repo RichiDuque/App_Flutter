@@ -3,6 +3,7 @@ class Producto {
   final String uuid;
   final String nombre;
   final String? descripcion;
+  final String? codigoBarras;
   final double precio;
   final int stock;
   final int? categoriaId;
@@ -13,6 +14,7 @@ class Producto {
     required this.uuid,
     required this.nombre,
     this.descripcion,
+    this.codigoBarras,
     required this.precio,
     required this.stock,
     this.categoriaId,
@@ -25,6 +27,7 @@ class Producto {
       uuid: json['uuid'] as String? ?? '',
       nombre: json['nombre'] as String? ?? 'Sin nombre',
       descripcion: json['descripcion'] as String?,
+      codigoBarras: json['codigo_barras'] as String?,
       precio: _parseDouble(json['precio']),
       stock: _parseInt(json['stock']),
       categoriaId: json['categoria_id'] as int?,
@@ -70,6 +73,7 @@ class Producto {
       'uuid': uuid,
       'nombre': nombre,
       'descripcion': descripcion,
+      'codigo_barras': codigoBarras,
       'precio': precio,
       'stock': stock,
       'categoria_id': categoriaId,

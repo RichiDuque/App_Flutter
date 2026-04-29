@@ -213,7 +213,7 @@ class CarguesRepository {
             'cargues_detalles',
             {
               'id': detalle.id,
-              'uuid': detalle.uuid ?? '',
+              'uuid': detalle.uuid,
               'cargue_id': cargue.id,
               'producto_id': detalle.productoId,
               'cantidad': detalle.cantidad,

@@ -32,7 +32,7 @@ class Cargue {
 
     return Cargue(
       id: json['id'] as int,
-      uuid: json['uuid'] as String? ?? '',
+      uuid: json['uuid'] as String? ?? 'cargue-${json['id']}',
       numeroCargue: json['numero_cargue'] as String?,
       usuarioId: json['usuario_id'] as int,
       fecha: DateTime.parse(json['fecha'] as String),

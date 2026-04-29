@@ -1,6 +1,7 @@
 class DetalleDevolucion {
   final int id;
   final int devolucionId;
+  final int? facturaItemId;
   final int productoId;
   final String? productoNombre;
   final String? productoDescripcion;
@@ -11,6 +12,7 @@ class DetalleDevolucion {
   DetalleDevolucion({
     required this.id,
     required this.devolucionId,
+    this.facturaItemId,
     required this.productoId,
     this.productoNombre,
     this.productoDescripcion,
@@ -47,6 +49,7 @@ class DetalleDevolucion {
     return DetalleDevolucion(
       id: json['id'] as int,
       devolucionId: json['devolucion_id'] as int,
+      facturaItemId: json['factura_item_id'] as int?,
       productoId: json['producto_id'] as int,
       productoNombre: productoNombre,
       productoDescripcion: productoDescripcion,

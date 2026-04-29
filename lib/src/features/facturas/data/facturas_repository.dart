@@ -318,7 +318,7 @@ class FacturasRepository {
 
       final db = await _db.database;
 
-      // Insertar cada devolución en la tabla devoluciones
+      // Insertar cada devolución y sus ítems
       for (final devolucion in factura.devoluciones) {
         await db.insert(
           'devoluciones',
@@ -336,6 +336,26 @@ class FacturasRepository {
           },
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
+
+        for (final detalle in devolucion.detalles) {
+          if (detalle.facturaItemId == null) continue;
+          await db.insert(
+            'devoluciones_items',
+            {
+              'id': detalle.id,
+              'uuid': 'dev-item-${detalle.id}',
+              'devolucion_id': detalle.devolucionId,
+              'factura_item_id': detalle.facturaItemId,
+              'cantidad': detalle.cantidad,
+              'precio_unitario': detalle.precioUnitario,
+              'subtotal': detalle.subtotal,
+              'created_at': devolucion.fecha.toIso8601String(),
+              'updated_at': devolucion.fecha.toIso8601String(),
+              'synced': 1,
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
       }
 
       print('[FacturasRepository._syncFacturaDevoluciones] Devoluciones sincronizadas para factura ${factura.id}: ${factura.devoluciones.length}');
