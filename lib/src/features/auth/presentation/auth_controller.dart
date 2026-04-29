@@ -1,13 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:facturacion_app/src/features/auth/domain/auth_repository.dart';
 import 'package:facturacion_app/src/features/auth/domain/auth_state.dart';
-import 'package:facturacion_app/src/features/productos/presentation/productos_provider.dart';
-import 'package:facturacion_app/src/features/categorias/presentation/categorias_provider.dart';
-import 'package:facturacion_app/src/features/clientes/presentation/clientes_provider.dart';
-import 'package:facturacion_app/src/features/facturas/presentation/facturas_provider.dart';
-import 'package:facturacion_app/src/features/listas_precios/presentation/listas_precios_provider.dart';
-import 'package:facturacion_app/src/features/usuarios/presentation/usuarios_provider.dart' as usuarios_mod;
-import 'package:facturacion_app/src/features/cargues/presentation/cargues_provider.dart';
+import '../../../core/sync/sync_all_provider.dart';
 
 final authControllerProvider =
     StateNotifierProvider<AuthController, AuthState>((ref) {
@@ -49,6 +43,7 @@ class AuthController extends StateNotifier<AuthState> {
             role: data['rol'] ?? data['role'] ?? 'vendedor',
             listaPreciosId: data['lista_precios_id'] ?? data['lista_id'],
           );
+          _sincronizarDatosDespuesDeLogin();
         } catch (e) {
           // No hay conexión o token expirado
           // Usar datos locales para permitir acceso offline
@@ -88,6 +83,7 @@ class AuthController extends StateNotifier<AuthState> {
             role: data['rol'] ?? data['role'] ?? 'vendedor',
             listaPreciosId: data['lista_precios_id'] ?? data['lista_id'],
           );
+          _sincronizarDatosDespuesDeLogin();
         } catch (e) {
           // Token inválido y no hay datos locales, limpiar todo
           print('[AuthController] Token inválido y sin datos locales: $e');
@@ -212,24 +208,12 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  /// Sincroniza todos los datos desde el servidor después del login
   void _sincronizarDatosDespuesDeLogin() {
-    print('[AuthController] Iniciando sincronización automática después del login...');
-
-    try {
-      // Invalidar todos los providers para forzar la recarga desde el servidor
-      _ref.invalidate(productosProvider);
-      _ref.invalidate(categoriasProvider);
-      _ref.invalidate(clientesProvider);
-      _ref.invalidate(facturasProvider);
-      _ref.invalidate(listasPreciosProvider);
-      _ref.invalidate(usuarios_mod.usuariosProvider);
-      _ref.invalidate(carguesProvider);
-
+    print('[AuthController] Iniciando sincronización automática...');
+    _ref.read(syncAllProvider).syncAll().then((_) {
       print('[AuthController] Sincronización automática completada');
-    } catch (e) {
+    }).catchError((e) {
       print('[AuthController] Error en sincronización automática: $e');
-      // No lanzar error, solo registrar - la sincronización es secundaria al login
-    }
+    });
   }
 }

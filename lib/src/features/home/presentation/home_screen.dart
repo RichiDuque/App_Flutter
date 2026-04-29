@@ -8,14 +8,7 @@ import 'package:facturacion_app/src/features/facturacion/presentation/facturas_g
 import 'package:facturacion_app/src/features/categorias/presentation/categorias_provider.dart';
 import 'package:facturacion_app/src/features/clientes/presentation/screens/clientes_screen.dart';
 import 'package:facturacion_app/src/features/clientes/presentation/screens/cliente_detail_screen.dart';
-import 'package:facturacion_app/src/features/clientes/presentation/clientes_provider.dart';
-import 'package:facturacion_app/src/features/facturas/presentation/facturas_provider.dart';
-import 'package:facturacion_app/src/features/listas_precios/presentation/listas_precios_provider.dart';
-import 'package:facturacion_app/src/features/usuarios/presentation/usuarios_provider.dart' as usuarios_mod;
-import 'package:facturacion_app/src/features/cargues/presentation/cargues_provider.dart';
-import 'package:facturacion_app/src/features/descuentos/presentation/descuentos_provider.dart';
-import 'package:facturacion_app/src/features/equipos/presentation/equipos_provider.dart';
-import '../../../core/theme/theme_provider.dart';
+import '../../../core/sync/sync_all_provider.dart';
 import 'widgets/app_drawer.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -578,19 +571,17 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  /// Sincroniza todos los datos desde el servidor
   void _sincronizarDatos(BuildContext context, WidgetRef ref) async {
-    // Mostrar diálogo de carga
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.grey[850],
-        content: Row(
+        content: const Row(
           children: [
-            const CircularProgressIndicator(color: Colors.green),
-            const SizedBox(width: 20),
-            const Expanded(
+            CircularProgressIndicator(color: Colors.green),
+            SizedBox(width: 20),
+            Expanded(
               child: Text(
                 'Sincronizando datos desde el servidor...',
                 style: TextStyle(color: Colors.white),
@@ -602,44 +593,10 @@ class HomeScreen extends ConsumerWidget {
     );
 
     try {
-      // Obtener los repositorios y forzar sincronización desde el servidor
-      final productosRepo = ref.read(productosRepositoryProvider);
-      final categoriasRepo = ref.read(categoriasRepositoryProvider);
-      final clientesRepo = ref.read(clientesRepositoryProvider);
-      final facturasRepo = ref.read(facturasRepositoryProvider);
-      final listasPreciosRepo = ref.read(listasPreciosRepositoryProvider);
-      final usuariosRepo = ref.read(usuarios_mod.usuariosRepositoryProvider);
-      final carguesRepo = ref.read(carguesRepositoryProvider);
-      final descuentosRepo = ref.read(descuentosRepositoryProvider);
-      final equiposRepo = ref.read(equiposRepositoryProvider);
-
-      // Sincronizar todos los datos en paralelo
-      await Future.wait([
-        productosRepo.syncFromServer(),
-        categoriasRepo.syncFromServer(),
-        clientesRepo.syncFromServer(),
-        facturasRepo.syncFromServer(),
-        listasPreciosRepo.syncFromServer(),
-        usuariosRepo.syncFromServer(),
-        carguesRepo.syncFromServer(),
-        descuentosRepo.syncFromServer(),
-        equiposRepo.syncFromServer(),
-      ]);
-
-      // Invalidar todos los providers para forzar la recarga desde SQLite actualizado
-      ref.invalidate(productosProvider);
-      ref.invalidate(categoriasProvider);
-      ref.invalidate(clientesProvider);
-      ref.invalidate(facturasProvider);
-      ref.invalidate(listasPreciosProvider);
-      ref.invalidate(usuarios_mod.usuariosProvider);
-      ref.invalidate(carguesProvider);
-      ref.invalidate(descuentosProvider);
-      ref.invalidate(equiposProvider);
+      await ref.read(syncAllProvider).syncAll();
 
       if (context.mounted) {
-        Navigator.of(context).pop(); // Cerrar diálogo de carga
-
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Sincronización completada exitosamente'),
@@ -650,8 +607,7 @@ class HomeScreen extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        Navigator.of(context).pop(); // Cerrar diálogo de carga
-
+        Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error al sincronizar: $e'),
