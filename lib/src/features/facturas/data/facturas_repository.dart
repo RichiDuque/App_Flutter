@@ -598,7 +598,7 @@ class FacturasRepository {
   Future<Devolucion> obtenerDevolucion(int devolucionId) async {
     try {
       print('🔍 [obtenerDevolucion] Solicitando devolución ID: $devolucionId');
-      final url = "/facturas/devoluciones/$devolucionId";
+      final url = "/devoluciones/$devolucionId";
       print('🔍 [obtenerDevolucion] URL: $url');
       print('🔍 [obtenerDevolucion] Base URL completa: ${_dio.options.baseUrl}$url');
 
